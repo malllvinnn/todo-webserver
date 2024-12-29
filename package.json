@@ -1,0 +1,25 @@
+{
+  "name": "todo-webserver",
+  "version": "1.0.0",
+  "description": "learn purpose",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/malllvinnn/todo-webserver.git"
+  },
+  "keywords": [
+    "web-server"
+  ],
+  "author": "MUHAMMAD MALFIN",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/malllvinnn/todo-webserver/issues"
+  },
+  "homepage": "https://github.com/malllvinnn/todo-webserver#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
