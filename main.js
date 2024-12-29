@@ -1,7 +1,19 @@
 const express = require('express')
+const config = require('./config')
+const router = require('./routes')
+
+const morgan = require('morgan')
+const logger = morgan(config.logFormat())
 
 const app = express()
-const port = 3002
+
+app.use(express.json())
+app.use(logger)
+app.use('/api/v1', router)
+app.use((err, req, res, _) => {
+  console.log(err)
+  res.json({ message: 'something going wrong!' })
+})
 
 app.get('/', (req, res) => {
   res.status(200).json({
@@ -13,6 +25,6 @@ app.get('/', (req, res) => {
   })
 })
 
-app.listen(port, () => {
-  console.log(`server listened on port: ${port}`)
+app.listen(config.port(), () => {
+  console.log(`server listened on port: ${config.port()}`)
 })
