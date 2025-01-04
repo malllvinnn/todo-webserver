@@ -12,13 +12,22 @@ class TaskController {
     this.#repo = taskRepository
   }
 
+  #getUserId = (req) => {
+    const userId = req.headers['x-user-id']
+    if (!userId) return { exist: false }
+    return { exist: true, userId }
+  }
+
   /**
    * get all task data from repository
    * @param {*} _ - request object (not used).
    * @param {Object} res - response object for send task data.
    */
-  getAll = (_, res) => {
-    res.status(200).json(this.#repo.all())
+  getAll = (req, res) => {
+    const { exist, userId } = this.#getUserId(req)
+    if (!exist) return this.#unauthorized(res)
+
+    res.status(200).json(this.#repo.all(userId))
   }
 
   /**
@@ -27,8 +36,11 @@ class TaskController {
    * @param {Object} res - request object for send task data of success added.
    */
   addTask = (req, res) => {
+    const { exist, userId } = this.#getUserId(req)
+    if (!exist) return this.#unauthorized(res)
+
     const { title } = req.body
-    const newTask = this.#repo.add(title)
+    const newTask = this.#repo.add(userId, title)
 
     res.status(201).json(newTask)
   }
@@ -40,9 +52,12 @@ class TaskController {
    * @returns {Object} - response by status 404 if task not founded.
    */
   updateTask = (req, res) => {
+    const { exist, userId } = this.#getUserId(req)
+    if (!exist) return this.#unauthorized(res)
+
     const { id } = req.params
     const { status } = req.body
-    const { ok, data } = this.#repo.update(id, status)
+    const { ok, data } = this.#repo.update(userId, id, status)
 
     if (!ok) return res.status(404).json({
       status: STATUS_CODES[404],
@@ -59,8 +74,11 @@ class TaskController {
    * @returns {Object} - response by status 404 if task not founded.
    */
   removeTask = (req, res) => {
+    const { exist, userId } = this.#getUserId(req)
+    if (!exist) return this.#unauthorized(res)
+
     const { id } = req.params
-    const { ok, data } = this.#repo.removeById(id)
+    const { ok, data } = this.#repo.removeById(userId, id)
 
     if (!ok) return res.status(404).json({
       status: STATUS_CODES[404],
@@ -68,6 +86,13 @@ class TaskController {
     })
 
     res.status(200).json(data)
+  }
+
+  #unauthorized = (res) => {
+    res.status(401).json({
+      status: STATUS_CODES[401],
+      message: 'login requered'
+    })
   }
 }
 

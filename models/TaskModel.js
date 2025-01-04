@@ -1,24 +1,20 @@
 const { randomUUID } = require('node:crypto')
 
 class TaskRepository {
-  #task = [
-    { id: randomUUID(), title: 'title a', status: 'todo' },
-    { id: randomUUID(), title: 'title b', status: 'todo' },
-    { id: randomUUID(), title: 'title c', status: 'todo' },
-  ]
+  #task = []
 
-  all = () => this.#task
+  all = (userId) => this.#task.filter((data) => data.userId === userId)
 
-  add = (title) => {
-    const newTask = { id: randomUUID(), title: title, status: 'todo' }
+  add = (userId, title) => {
+    const newTask = { id: randomUUID(), title: title, status: 'todo', userId }
 
     this.#task.push(newTask)
 
     return newTask
   }
 
-  update = (id, status) => {
-    const index = this.#task.findIndex((data) => data.id === id)
+  update = (userId, id, status) => {
+    const index = this.#task.findIndex((data) => data.id === id && data.userId === userId)
 
     if (id < 0) return { ok: false, data: null }
 
@@ -27,8 +23,8 @@ class TaskRepository {
     return { ok: true, data: this.#task[index] }
   }
 
-  removeById = (id) => {
-    const target = this.#task.find((data) => data.id === id)
+  removeById = (userId, id) => {
+    const target = this.#task.find((data) => data.id === id && data.userId === userId)
 
     if (target === undefined) return { ok: false, data: null }
 
