@@ -13,7 +13,10 @@ class TaskController {
   }
 
   #getUserId = (req) => {
-    const userId = req.headers['x-user-id']
+    const { authClaims } = req
+    if (!authClaims) return { ok: false }
+
+    const { sub: userId } = authClaims
     if (!userId) return { exist: false }
     return { exist: true, userId }
   }
